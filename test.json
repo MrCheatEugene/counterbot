@@ -1,0 +1,12 @@
+public - Инфа о паблике(стата)-serverInfo
+stats - Статистика-getStats
+subtomap - subtomap [карта] | Подписаться на карту(вам сообщат когда она будет стоять на сервере)-subToMap
+unsubmap - unsubmap [карта] | Отписаться от карты(вам не будут приходить уведомления о этой карте)-unsubFromMap
+listmaps - Список карт-listmaps
+size - Узнать размер члена/вагины-size
+test - Тест на беременность-test
+topflooders - Топ 10 флудеров-top10Flooders
+freakofday - Фрик дня-foolOfDay
+pairofday - Пара дня-pairOfDay
+nicestofday - Красавчик дня-nicestOfDay 
+info - Инфа о боте-info
