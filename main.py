@@ -17,7 +17,7 @@ chatID = config['chatid']
 API_TOKEN_FILE = open(botdirectory+"token.txt","r")
 API_TOKEN = API_TOKEN_FILE.read()
 API_TOKEN_FILE.close()
-bot = telebot.TeleBot(API_TOKEN)
+bot = telebot.TeleBot(API_TOKEN, threaded=True)
 fileUsers = open(botdirectory+"usersDB.json",'r+')
 users = json.loads(fileUsers.read())
 fileMsgs = open(botdirectory+"messages.json",'r', encoding="utf-8")
