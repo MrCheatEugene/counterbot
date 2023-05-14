@@ -45,7 +45,10 @@ def getById(uid):
 
 def getuname(user):
     if user.username == None:
-        return '<a href="tg://user?id='+user.id+'"'+user.full_name
+        try:
+            return '<a href="tg://user?id='+user.id+'"'+user.full_name+'</a>'
+        except:
+            return "Неизвестен"
     return '@'+user.username
 
 def getFlooders():
@@ -131,6 +134,8 @@ def notifyAboutMap(info):
                 usersubbed = '<a href="tg://user?id='+str(usersubbed.id)+'"'+usersubbed.full_name+"</a>"
             toReturnSTR+=usersubbed+","
             pass
+        if(toReturnSTR==LN['onserver']+" <b>"+srvmap+"</b>!\n\n"):
+            return False
         toReturnSTR+=" "+LN['joinMap']+"!"
         return toReturnSTR
     else:
@@ -554,15 +559,18 @@ def checkIfMidnight():
 def updateMaplist():
     try:
         lines = requests.get(config['maplistdl']).text.replace('\r\n','\n').split('\n')
-        print(lines)
         maps = []
         for line in lines:
-            if not line.startswith(""):
-                if not line.replace("\n","").replace("\r","").split(" ")[0] == "":
-                    maps.append(line.replace("\n","").replace("\r","").split(" ")[0])
+            if line.startswith(";") or len(line.split("_"))==1:
+                continue
+            if line.replace("\r\n","") !="" and line.replace("\n","") != "":
+                maps.append(line.replace("\n","").replace("\r","").replace(" ",""))
+            else:
+                print("sc")
         fileCommands = open(botdirectory+'maps.json','w+', encoding="utf-8")
         fileCommands.write(json.dumps(maps))
         fileCommands.close()
+        print(maps)
         reloadmaps()
     except Exception as e:
         raise (e)
