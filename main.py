@@ -17,7 +17,8 @@ chatID = config['chatid']
 API_TOKEN_FILE = open(botdirectory+"token.txt","r")
 API_TOKEN = API_TOKEN_FILE.read()
 API_TOKEN_FILE.close()
-bot = telebot.TeleBot(API_TOKEN, threaded=True)
+bot = telebot.TeleBot(API_TOKEN,threaded=True)
+print(API_TOKEN)
 fileUsers = open(botdirectory+"usersDB.json",'r+')
 users = json.loads(fileUsers.read())
 fileMsgs = open(botdirectory+"messages.json",'r', encoding="utf-8")
@@ -46,8 +47,9 @@ def getById(uid):
 def getuname(user):
     if user.username == None:
         try:
-            return '<a href="tg://user?id='+user.id+'"'+user.full_name+'</a>'
-        except:
+            return '<a href="tg://user?id='+str(user.id)+'">'+user.full_name+'</a>'
+        except Exception as e:
+            print(e)
             return "Неизвестен"
     return '@'+user.username
 
@@ -337,9 +339,7 @@ def getStats(username):
 def updateUsers(fileUsers,users):
     #print(users)
     fileUsers.close()
-    os.remove(botdirectory+"usersDB.json")
-    os.mknod(botdirectory+"usersDB.json")
-    fileUsers = open(botdirectory+"usersDB.json",'r+')
+    fileUsers = open(botdirectory+"usersDB.json",'w+')
     fileUsers.write(json.dumps(users))
     fileUsers.close()
     fileUsers = open(botdirectory+"usersDB.json",'r+')
