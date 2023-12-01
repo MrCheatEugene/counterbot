@@ -18,7 +18,6 @@ API_TOKEN_FILE = open(botdirectory+"token.txt","r")
 API_TOKEN = API_TOKEN_FILE.read()
 API_TOKEN_FILE.close()
 bot = telebot.TeleBot(API_TOKEN,threaded=True)
-print(API_TOKEN)
 fileUsers = open(botdirectory+"usersDB.json",'r+')
 users = json.loads(fileUsers.read())
 fileMsgs = open(botdirectory+"messages.json",'r', encoding="utf-8")
@@ -480,8 +479,22 @@ def test(username):
     escapedmsg = str(LN['size_UserMention']+" "+getuname(getById(username))+" "+str(lines)+" "+strLines+". "+linesMeaning)
     return escapedmsg
 
+def reply_to_split(message, text, parse_mode="html"):
+    if len(text) >=4096:
+        buf = ''
+        msgs= []
+        for l in text.split('\n'):
+            buf += f'{l}\n'
+            if len(buf)>=4000:
+                msgs.append(buf)
+                buf=''
+        for msg in msgs:
+            bot.reply_to(message, msg, parse_mode=parse_mode)
+    else:
+        bot.reply_to(message, text, parse_mode=parse_mode)
+
 def listmaps_msg(message):
-    bot.reply_to(message,listmaps(message.from_user.id),parse_mode="html")
+    reply_to_split(message,listmaps(message.from_user.id),parse_mode="html")
 
 def subToMap_msg(message):
     args = message.text.split()
@@ -601,16 +614,16 @@ def message_handler(message):
                 commandFUN = globals()[commandFunName]
             if commandFunName+"_msg" in globals() and len(list(inspect.signature(commandFUN).parameters)) == 0:                
                 commandFUN = globals()[commandFunName+"_msg"]
-                bot.reply_to(message,commandFUN(),parse_mode="html")
+                reply_to_split(message,commandFUN(),parse_mode="html")
             elif commandFunName+"_msg" in globals() and len(list(inspect.signature(commandFUN).parameters)) == 1 and list(inspect.signature(commandFUN).parameters)[0] == 'message':
                 commandFUN = globals()[commandFunName+"_msg"]
                 commandFUN(message)
             elif commandFunName in globals() and len(list(inspect.signature(commandFUN).parameters)) == 1 and list(inspect.signature(commandFUN).parameters)[0] == 'username':
                 commandFUN = globals()[commandFunName]
-                bot.reply_to(message,commandFUN(message.from_user.id),parse_mode="html")
+                reply_to_split(message,commandFUN(message.from_user.id),parse_mode="html")
             elif commandFunName in globals() and len(list(inspect.signature(commandFUN).parameters)) == 0:
                 commandFUN = globals()[commandFunName]
-                bot.reply_to(message,commandFUN(),parse_mode="html")
+                reply_to_split(message,commandFUN(),parse_mode="html")
     else:
         bot.reply_to(message,f"Этот бот предназначен для другого чата. {f'(Chat ID {message.chat.id})' if config['showChatId'] else '' }")
 @bot.inline_handler(lambda query: len(query.query) == 0)
